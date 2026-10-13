@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'node:http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Server } from 'socket.io';
 import { canMove, chooseBotMove, key, makeSetup, sameCell } from './game.js';
 
@@ -11,10 +13,10 @@ const PORT = process.env.PORT || 3000;
 const PASSWORD = process.env.FACILITATOR_PASSWORD || 'Ervaring@26';
 const rooms = new Map();
 const COLORS = ['#ff5d73', '#665cff', '#00b8b0', '#ffb703', '#3698ff', '#8dce49', '#f17bc2', '#f47b35'];
+const publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
 
-app.use(express.static('public'));
-app.get('/join', (_, res) => res.sendFile('index.html', { root: 'public' }));
-app.get('/facilitator', (_, res) => res.sendFile('index.html', { root: 'public' }));
+app.use(express.static(publicDir));
+app.get(['/', '/join', '/facilitator'], (_, res) => res.sendFile(path.join(publicDir, 'index.html')));
 
 const roomCode = () => {
   let code;
